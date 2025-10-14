@@ -1,0 +1,5 @@
+package com.neighborhood.servicefinder.dto;
+
+public class BookingRequestDTO {
+
+}

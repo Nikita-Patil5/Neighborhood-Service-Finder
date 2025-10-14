@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Status Update</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden;">
+        
+        <!-- Header -->
+        <div style="background-color: #2196F3; color: white; padding: 20px; text-align: center;">
+            <h2>Booking Status Updated</h2>
+        </div>
+
+        <!-- Body -->
+        <div style="padding: 20px;">
+            <p>Hi <b th:text="${userName}">User Name</b>,</p>
+            <p>Your booking for <b th:text="${serviceName}">Service Name</b> has been updated.</p>
+
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <tr>
+                    <td><b>Date:</b></td>
+                    <td th:text="${date}">2025-09-22</td>
+                </tr>
+                <tr>
+                    <td><b>Time:</b></td>
+                    <td><span th:text="${startTime}">10:00</span> - <span th:text="${endTime}">11:00</span></td>
+                </tr>
+                <tr>
+                    <td><b>Price:</b></td>
+                    <td>$<span th:text="${price}">100</span></td>
+                </tr>
+                <tr>
+                    <td><b>New Status:</b></td>
+                    <td th:text="${status}" 
+                        th:style="'color:' + (${status}=='CONFIRMED' ? 'green' : (${status}=='CANCELLED' ? 'red' : 'orange')) + '; font-weight:bold;'">
+                        CONFIRMED
+                    </td>
+                </tr>
+            </table>
+
+            <!-- CTA Button -->
+            <div style="margin-top: 20px; text-align: center;">
+                <a th:href="@{'https://your-website.com/bookings/' + ${bookingId}}" 
+                   style="background-color: #2196F3; color: white; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: bold;">
+                    View Booking Details
+                </a>
+            </div>
+        </div>
+
+        <div style="padding: 15px; text-align: center; font-size: 12px; color: #888;">
+            We’ll keep you updated with further changes. Thank you for using our service!
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,144 @@
+package com.neighborhood.servicefinder.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.context.Context;
+
+import com.neighborhood.servicefinder.exception.ResourceNotFoundException;
+import com.neighborhood.servicefinder.model.Booking;
+import com.neighborhood.servicefinder.model.Service;
+import com.neighborhood.servicefinder.model.User;
+import com.neighborhood.servicefinder.repository.BookingRepository;
+import com.neighborhood.servicefinder.repository.ServiceRepository;
+import com.neighborhood.servicefinder.repository.UserRepository;
+import com.neighborhood.servicefinder.service.EmailService;
+
+@RestController
+@RequestMapping("/api/bookings")
+public class BookingController {
+
+    @Autowired
+    private BookingRepository bookingRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    @PostMapping
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<String> createBooking(@RequestBody Booking bookingRequest, Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Service service = serviceRepository.findById(bookingRequest.getService().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
+
+        User provider = service.getProvider();
+
+        Booking booking = new Booking();
+        booking.setUser(user);
+        booking.setService(service);
+        booking.setProvider(provider);
+        booking.setDate(bookingRequest.getDate());
+        booking.setStartTime(bookingRequest.getStartTime());
+        booking.setEndTime(bookingRequest.getEndTime());
+        booking.setStatus("PENDING");
+        booking.setPrice(service.getPrice());
+        bookingRepository.save(booking);
+
+        // --- Prepare Thymeleaf context for user ---
+        Context userContext = new Context();
+        userContext.setVariable("userName", user.getName());
+        userContext.setVariable("serviceName", service.getName());
+        userContext.setVariable("date", booking.getDate());
+        userContext.setVariable("startTime", booking.getStartTime());
+        userContext.setVariable("endTime", booking.getEndTime());
+        userContext.setVariable("price", booking.getPrice());
+        emailService.sendHtmlTemplateEmail(user.getEmail(), "Booking Confirmation", "user-booking", userContext);
+
+        // --- Prepare Thymeleaf context for provider ---
+        Context providerContext = new Context();
+        providerContext.setVariable("providerName", provider.getName());
+        providerContext.setVariable("serviceName", service.getName());
+        providerContext.setVariable("userName", user.getName());
+        providerContext.setVariable("date", booking.getDate());
+        providerContext.setVariable("startTime", booking.getStartTime());
+        providerContext.setVariable("endTime", booking.getEndTime());
+        providerContext.setVariable("price", booking.getPrice());
+        emailService.sendHtmlTemplateEmail(provider.getEmail(), "New Booking Alert", "provider-booking", providerContext);
+
+        return ResponseEntity.ok("Booking created successfully!");
+    }
+
+    // 2️⃣ Admin gets all bookings
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<List<Booking>> getAllBookings() {
+        return ResponseEntity.ok(bookingRepository.findAll());
+    }
+
+    // 3️⃣ User/Admin gets booking by ID
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<Booking> getBookingById(@PathVariable Long id, Authentication authentication) {
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.getRole().name().equals("USER") && !booking.getUser().getId().equals(user.getId())) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+        return ResponseEntity.ok(booking);
+    }
+
+    // 4️⃣ User gets their bookings
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/my")
+    public ResponseEntity<List<Booking>> getMyBookings(Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return ResponseEntity.ok(bookingRepository.findByUser(user));
+    }
+
+    // 5️⃣ Provider updates booking status
+    @PreAuthorize("hasRole('PROVIDER')")
+    @PutMapping("/{id}/status")
+    public ResponseEntity<String> updateBookingStatus(@PathVariable Long id, @RequestParam String status,
+                                                      Authentication authentication) {
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        User provider = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Provider not found"));
+
+        if (!booking.getProvider().getId().equals(provider.getId())) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+
+        booking.setStatus(status);
+        bookingRepository.save(booking);
+
+        return ResponseEntity.ok("Booking status updated to " + status);
+    }
+
+    // 6️⃣ Provider gets their bookings
+    @PreAuthorize("hasRole('PROVIDER')")
+    @GetMapping("/my-bookings")
+    public ResponseEntity<List<Booking>> getMyBookingsForProvider(Authentication authentication) {
+        User provider = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Provider not found"));
+        return ResponseEntity.ok(bookingRepository.findByProvider(provider));
+    }
+}

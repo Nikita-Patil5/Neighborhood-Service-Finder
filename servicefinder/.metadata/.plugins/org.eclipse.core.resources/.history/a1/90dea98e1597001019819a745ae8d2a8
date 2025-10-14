@@ -1,0 +1,150 @@
+package com.neighborhood.servicefinder.controller;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.neighborhood.servicefinder.dto.BookingRequestDTO;
+import com.neighborhood.servicefinder.dto.BookingResponseDTO;
+import com.neighborhood.servicefinder.exception.ResourceNotFoundException;
+import com.neighborhood.servicefinder.model.Booking;
+import com.neighborhood.servicefinder.model.Service;
+import com.neighborhood.servicefinder.model.User;
+import com.neighborhood.servicefinder.repository.BookingRepository;
+import com.neighborhood.servicefinder.repository.ServiceRepository;
+import com.neighborhood.servicefinder.repository.UserRepository;
+
+@RestController
+@RequestMapping("/api/bookings")
+public class BookingController {
+
+    @Autowired
+    private BookingRepository bookingRepository;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    // 1️⃣ Create booking using DTO
+    @PostMapping
+    public ResponseEntity<?> createBooking(@RequestBody BookingRequestDTO bookingDTO) {
+
+        // Fetch service
+        Service service = serviceRepository.findById(bookingDTO.getServiceId())
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
+
+        // Fetch user
+        User user = userRepository.findById(bookingDTO.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // Fetch provider
+        User provider = userRepository.findById(service.getProviderId())
+                .orElseThrow(() -> new ResourceNotFoundException("Provider not found"));
+
+        // Conflict check
+        List<Booking> existingBookings = bookingRepository
+                .findByProviderIdAndDate(provider.getId(), bookingDTO.getDate());
+
+        for (Booking existing : existingBookings) {
+            boolean overlap = bookingDTO.getStartTime().isBefore(existing.getEndTime()) &&
+                              bookingDTO.getEndTime().isAfter(existing.getStartTime());
+
+            if (overlap) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Booking conflict! Provider is already booked in this time slot.");
+            }
+        }
+
+        // Save booking
+        Booking booking = new Booking();
+        booking.setServiceId(service.getId());
+        booking.setUserId(user.getId());
+        booking.setProviderId(provider.getId());
+        booking.setPrice(service.getPrice());
+        booking.setDate(bookingDTO.getDate());
+        booking.setStartTime(bookingDTO.getStartTime());
+        booking.setEndTime(bookingDTO.getEndTime());
+        booking.setStatus("PENDING");
+
+        Booking savedBooking = bookingRepository.save(booking);
+
+        // Prepare response DTO
+        BookingResponseDTO responseDTO = new BookingResponseDTO();
+        responseDTO.setBookingId(savedBooking.getId());
+        responseDTO.setStatus(savedBooking.getStatus());
+        responseDTO.setPrice(savedBooking.getPrice());
+        responseDTO.setServiceName(service.getName());
+        responseDTO.setUserName(user.getName());
+        responseDTO.setProviderName(provider.getName());
+        responseDTO.setDate(savedBooking.getDate());
+        responseDTO.setStartTime(savedBooking.getStartTime());
+        responseDTO.setEndTime(savedBooking.getEndTime());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+
+    // 2️⃣ Update booking status
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam String status) {
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        booking.setStatus(status.toUpperCase());
+        bookingRepository.save(booking);
+
+        return ResponseEntity.ok("Booking status updated to " + status.toUpperCase());
+    }
+
+    // 3️⃣ Get bookings by provider (today)
+    @GetMapping("/provider/{providerId}")
+    public ResponseEntity<List<BookingResponseDTO>> getBookingsByProvider(@PathVariable Long providerId) {
+        List<BookingResponseDTO> bookings = bookingRepository
+                .findByProviderIdAndDate(providerId, java.time.LocalDate.now())
+                .stream()
+                .map(booking -> mapToDTO(booking))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(bookings);
+    }
+
+    // 4️⃣ Get bookings by user
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<BookingResponseDTO>> getBookingsByUser(@PathVariable Long userId) {
+        List<BookingResponseDTO> bookings = bookingRepository
+                .findByUserId(userId)
+                .stream()
+                .map(booking -> mapToDTO(booking))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(bookings);
+    }
+
+    // Mapper: Booking → BookingResponseDTO
+    private BookingResponseDTO mapToDTO(Booking booking) {
+        Service service = serviceRepository.findById(booking.getServiceId())
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
+        User user = userRepository.findById(booking.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User provider = userRepository.findById(booking.getProviderId())
+                .orElseThrow(() -> new ResourceNotFoundException("Provider not found"));
+
+        BookingResponseDTO dto = new BookingResponseDTO();
+        dto.setBookingId(booking.getId());
+        dto.setStatus(booking.getStatus());
+        dto.setPrice(booking.getPrice());
+        dto.setServiceName(service.getName());
+        dto.setUserName(user.getName());
+        dto.setProviderName(provider.getName());
+        dto.setDate(booking.getDate());
+        dto.setStartTime(booking.getStartTime());
+        dto.setEndTime(booking.getEndTime());
+
+        return dto;
+    }
+}

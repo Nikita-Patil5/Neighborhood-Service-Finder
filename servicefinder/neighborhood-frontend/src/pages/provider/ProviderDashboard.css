@@ -1,0 +1,274 @@
+/* ProviderDashboard.css */
+
+/* --- Variables for Consistency --- */
+:root {
+  --primary-color: #007bff; /* Bootstrap primary blue */
+  --secondary-color: #6c757d; /* Bootstrap secondary grey */
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --info-color: #17a2b8;
+
+  --card-bg: #ffffff;
+  --card-border-color: #e9ecef;
+  --card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08); /* Stronger, more modern shadow */
+  --card-border-radius: 0.75rem; /* More rounded corners */
+
+  --table-header-bg: #f8f9fa;
+  --table-border-color: #dee2e6;
+
+  --modal-header-bg: var(--primary-color);
+  --modal-header-color: #fff;
+}
+
+/* --- General Dashboard Layout --- */
+.provider-dashboard {
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #343a40;
+}
+
+/* --- Header Card --- */
+.dashboard-header .card-body {
+  padding: 1.5rem 2rem;
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-shadow);
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--card-border-color);
+}
+
+.dashboard-header h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #343a40; /* Darker text for contrast */
+}
+
+.dashboard-header h1 .fw-bold {
+    color: var(--primary-color); /* Highlight provider name */
+}
+
+.logout-button {
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+.logout-button:hover {
+  background-color: var(--danger-color);
+  color: #fff;
+}
+
+/* --- Alert Styling --- */
+.alert {
+  border-radius: var(--card-border-radius);
+  font-weight: 500;
+}
+
+/* --- Dashboard Cards (Services & Bookings) --- */
+.dashboard-card {
+  border: none; /* Remove default card border */
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12); /* Slightly elevate on hover */
+}
+
+.dashboard-card .card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #495057; /* Slightly darker than default text */
+}
+
+.dashboard-card .card-title .text-primary {
+  color: var(--primary-color) !important;
+}
+
+/* --- Add Service Button --- */
+.add-service-button {
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+/* --- Tables --- */
+.dashboard-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: var(--card-border-radius); /* Apply border-radius to outer table */
+  overflow: hidden; /* Ensure rounded corners are visible */
+}
+
+.dashboard-table thead {
+  background-color: var(--table-header-bg);
+}
+
+.dashboard-table th {
+  padding: 1rem;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid var(--table-border-color);
+}
+
+.dashboard-table td {
+  padding: 0.8rem 1rem;
+  border-color: var(--table-border-color);
+}
+
+.dashboard-table tbody tr:hover {
+  background-color: #f1f6fa; /* Lighter hover for rows */
+}
+
+.service-category-badge {
+    padding: 0.4em 0.7em;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    background-color: #e0f2f7 !important; /* Light blue */
+    color: #007bff !important;
+}
+
+/* --- Action Buttons in Table --- */
+.action-button {
+  border-radius: 0.4rem;
+  padding: 0.45rem 0.6rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.action-button:hover {
+  transform: translateY(-1px);
+}
+
+/* --- Status Badges --- */
+.status-badge {
+  padding: 0.5em 1em;
+  font-size: 0.85em;
+  font-weight: 600;
+  border-radius: 1rem; /* More pill-like */
+  text-transform: uppercase;
+}
+
+/* --- Review Text Truncation (Optional, for long reviews in table) --- */
+.review-text {
+  max-height: 3em; /* Limit height to 2-3 lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Number of lines to show */
+  line-clamp: 2; /* Standard property for compatibility */
+  -webkit-box-orient: vertical;
+}
+
+/* --- Service & Booking Details Modals --- */
+.modal-header-custom {
+  background-color: var(--modal-header-bg);
+  color: var(--modal-header-color);
+  border-bottom: none;
+  border-top-left-radius: calc(var(--card-border-radius) - 1px);
+  border-top-right-radius: calc(var(--card-border-radius) - 1px);
+}
+
+.modal-header-custom .btn-close {
+  filter: invert(1); /* Makes close button white */
+}
+
+.modal-content {
+  border-radius: var(--card-border-radius);
+  overflow: hidden; /* Ensure rounded corners */
+}
+
+.modal-body .card {
+  border: none;
+  background-color: #f8f9fa; /* Light background for details card */
+}
+
+.modal-body .list-group-item {
+  background-color: transparent;
+  border-color: rgba(0, 0, 0, 0.05);
+  padding: 0.75rem 0;
+}
+
+.modal-body .list-group-item:first-child {
+  border-top: none;
+}
+.modal-body .list-group-item:last-child {
+  border-bottom: none;
+}
+
+
+/* --- Loading Spinner --- */
+.loading-spinner-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh; /* Center spinner vertically */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .dashboard-header .card-body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .dashboard-header h1 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+  .logout-button {
+    width: 100%;
+  }
+  .dashboard-card .card-title {
+    font-size: 1.3rem;
+  }
+  .add-service-button {
+    width: 100%;
+    margin-top: 1rem;
+  }
+  .table-responsive {
+    border-radius: var(--card-border-radius); /* Apply to wrapper */
+    overflow-x: auto; /* Enable horizontal scrolling */
+  }
+  .dashboard-table thead {
+    display: none; /* Hide table headers on small screens */
+  }
+  .dashboard-table, .dashboard-table tbody, .dashboard-table tr, .dashboard-table td {
+    display: block;
+    width: 100%;
+  }
+  .dashboard-table tr {
+    margin-bottom: 1rem;
+    border: 1px solid var(--table-border-color);
+    border-radius: var(--card-border-radius);
+    overflow: hidden;
+  }
+  .dashboard-table td {
+    text-align: right !important;
+    position: relative;
+    padding-left: 50%;
+  }
+  .dashboard-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    width: calc(50% - 20px);
+    text-align: left;
+    font-weight: bold;
+    color: #6c757d;
+  }
+  /* Specific labels for Booking table */
+  .dashboard-table td:nth-child(1)::before { content: "Service:"; }
+  .dashboard-table td:nth-child(2)::before { content: "User:"; }
+  .dashboard-table td:nth-child(3)::before { content: "Date & Time:"; }
+  .dashboard-table td:nth-child(4)::before { content: "Status:"; }
+  .dashboard-table td:nth-child(5)::before { content: "Actions:"; }
+
+  /* Specific labels for Service table */
+  .dashboard-table td:nth-child(1)::before { content: "Name:"; }
+  .dashboard-table td:nth-child(2)::before { content: "Price:"; }
+  .dashboard-table td:nth-child(3)::before { content: "Category:"; }
+  .dashboard-table td:nth-child(4)::before { content: "Actions:"; }
+
+  /* Adjust badge positioning for mobile */
+  .dashboard-table td .badge {
+    float: none;
+    display: inline-block;
+  }
+}

@@ -1,0 +1,28 @@
+# Application Info
+spring.application.name=Neighborhood-Service-Finder
+server.port=8080
+
+# Database Config
+spring.datasource.url=jdbc:mysql://localhost:3306/neighborhood_service?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+spring.datasource.username=service_user
+spring.datasource.password=Service123
+
+# JPA / Hibernate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+# Mail Config (use App Password for Gmail)
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=patilnikita6016@gmail.com
+spring.mail.password=${MAIL_PASSWORD}  # Load from ENV instead of hardcoding
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+
+# JWT Config
+jwt.secret=MySuperStrongSecretKey12345
+jwt.expiration=86400000  # 1 day in ms
+
+# Custom Salt (if still required in your hashing logic)
+spring.saltvalue=abABcd131010CDefEF

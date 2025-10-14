@@ -1,0 +1,255 @@
+General Dashboard Styling
+.admin-dashboard-container {
+  background-color: #f8f9fa; /* Light grey background */
+  min-height: 100vh;
+  padding-bottom: 30px;
+}
+
+.dashboard-header {
+  background: linear-gradient to right, #6f42c1, #8a2be2; /* Purple gradient */
+  color: white;
+  padding: 20px 30px;
+  border-radius: 0.5rem;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-title {
+  font-weight: 700;
+  font-size: 2.2rem;
+  margin-bottom: 0;
+  color: black;
+}
+
+
+/* Stats Cards */
+.stats-cards-row {
+  margin-top: 20px;
+}
+
+.stat-card {
+  text-align: left;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  position: relative;
+  background-color: #ffffff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 120px;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card .card-body {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.stat-card h6 {
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.stat-card h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #343a40;
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  opacity: 0.7;
+  color: #6f42c1; /* Default icon color */
+}
+
+/* Specific icon colors */
+.user-icon { color: #0d6efd; /* Blue */ }
+.provider-icon { color: #198754; /* Green */ }
+.service-icon { color: #ffc107; /* Yellow */ }
+.booking-icon { color: #6f42c1; /* Purple */ }
+
+
+/* Data Table Cards */
+.data-table-card {
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden; /* Ensures rounded corners are respected by table */
+}
+
+.card-header-custom {
+  background-color: #f0f2f5; /* Lighter grey header */
+  border-bottom: 1px solid #e9ecef;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  color: #343a40;
+  font-size: 1.25rem;
+}
+
+.data-table {
+  margin-bottom: 0; /* Remove default table margin */
+  border-collapse: separate; /* For rounded corners in future if needed */
+  border-spacing: 0;
+}
+
+.data-table thead th {
+  background-color: #e9ecef; /* Slightly darker header for table */
+  color: #495057;
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+  padding: 1rem 1.25rem;
+  vertical-align: middle;
+}
+
+.data-table tbody td {
+  padding: 0.85rem 1.25rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none; /* No border for the last row */
+}
+
+.data-table tbody tr:hover {
+  background-color: #f4f6f9; /* Light hover effect */
+}
+
+/* Action Buttons */
+.action-button {
+  border-radius: 0.35rem;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  margin: 0 2px;
+  transition: all 0.2s ease;
+}
+
+.action-button svg {
+  vertical-align: middle;
+}
+
+.action-button.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.action-button.btn-outline-info:hover {
+  background-color: #0dcaf0;
+  color: white;
+}
+
+.action-button.btn-outline-success:hover {
+  background-color: #198754;
+  color: white;
+}
+
+.action-button.btn-outline-warning:hover {
+  background-color: #ffc107;
+  color: #212529; /* Dark text for warning */
+}
+
+.booking-actions {
+  min-width: 150px; /* Ensure enough space for multiple buttons */
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 0.4em 0.6em;
+  font-size: 0.75em;
+  font-weight: 600;
+  border-radius: 0.35rem;
+  vertical-align: middle;
+}
+
+/* Modal Styling */
+.modal-header-custom {
+  background-color: #6f42c1;
+  color: white;
+  border-bottom: none;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+}
+
+.modal-header-custom .btn-close {
+  filter: invert(1); /* Makes close button white */
+}
+
+.modal-title {
+  font-weight: 600;
+}
+
+.modal-body-custom p {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+
+.modal-body-custom strong {
+  color: #343a40;
+  min-width: 80px;
+  display: inline-block;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px 20px;
+  }
+  .dashboard-title {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+  .logout-button {
+    width: 100%;
+  }
+  .stats-cards-row .col-md-3 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  .data-table thead {
+    display: none; /* Hide table headers on small screens */
+  }
+  .data-table tbody td {
+    display: block;
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+  .data-table tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: calc(50% - 30px);
+    font-weight: 600;
+    text-align: left;
+  }
+  /* For bookings specifically, to make actions fit */
+  .data-table tbody td:nth-child(1)::before { content: "ID:"; }
+  .data-table tbody td:nth-child(2)::before { content: "User:"; }
+  .data-table tbody td:nth-child(3)::before { content: "Provider:"; }
+  .data-table tbody td:nth-child(4)::before { content: "Service:"; }
+  .data-table tbody td:nth-child(5)::before { content: "Date:"; }
+  .data-table tbody td:nth-child(6)::before { content: "Status:"; }
+  .data-table tbody td:nth-child(7)::before { content: "Actions:"; }
+  .booking-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .booking-actions .action-button {
+    margin: 5px 2px;
+  }
+
+  /* Star Icon for Rating */
+.star-icon {
+  color: #ffc107;
+  margin-left: 3px;
+}
+
+/* Reuse data-table styles for reviews, no extra changes needed */
+
+}

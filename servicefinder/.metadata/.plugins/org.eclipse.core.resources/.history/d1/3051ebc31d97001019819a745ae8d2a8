@@ -1,0 +1,65 @@
+package com.neighborhood.servicefinder.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import com.neighborhood.servicefinder.model.Service;
+import com.neighborhood.servicefinder.repository.ServiceRepository;
+
+@RestController
+@RequestMapping("/api/services")
+public class ServiceController {
+
+    @Autowired
+    private ServiceRepository serviceRepository;
+
+    // Any authenticated user can view all services
+    @PreAuthorize("hasAnyRole('USER','PROVIDER','ADMIN')")
+    @GetMapping
+    public ResponseEntity<List<Service>> getAllServices() {
+        return ResponseEntity.ok(serviceRepository.findAll());
+    }
+
+    // Any authenticated user can view a single service
+    @PreAuthorize("hasAnyRole('USER','PROVIDER','ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<Service> getServiceById(@PathVariable Long id) {
+        return serviceRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Only PROVIDER can add a service
+    @PreAuthorize("hasRole('PROVIDER')")
+    @PostMapping
+    public ResponseEntity<Service> addService(@RequestBody Service service) {
+        return ResponseEntity.ok(serviceRepository.save(service));
+    }
+
+    // Only PROVIDER can update their own service
+    @PreAuthorize("hasRole('PROVIDER')")
+    @PutMapping("/{id}")
+    public ResponseEntity<Service> updateService(@PathVariable Long id, @RequestBody Service serviceDetails) {
+        return serviceRepository.findById(id).map(service -> {
+            service.setName(serviceDetails.getName());
+            service.setDescription(serviceDetails.getDescription());
+            service.setPrice(serviceDetails.getPrice());
+            serviceRepository.save(service);
+            return ResponseEntity.ok(service);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    // Only PROVIDER can delete their own service
+    @PreAuthorize("hasRole('PROVIDER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteService(@PathVariable Long id) {
+        return serviceRepository.findById(id).map(service -> {
+            serviceRepository.delete(service);
+            return ResponseEntity.ok("Service deleted successfully");
+        }).orElse(ResponseEntity.notFound().build());
+    }
+}

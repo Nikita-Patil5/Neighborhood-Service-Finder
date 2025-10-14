@@ -1,0 +1,98 @@
+package com.neighborhood.servicefinder.model;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "bookings")
+public class Booking {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	// Many bookings can belong to one user
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"bookings", "password"}) // Ignore user's bookings & password when serializing
+    private User user;
+	
+	private Long serviceId;		//The service being booked
+	private Long providerId; 	//The provider of the service;
+	
+	private LocalDate date;		//Booking date
+	private LocalTime startTime;
+	private LocalTime endTime;
+	
+	private String status;		//Pending, Confirmed, Cancelled
+	private Double price;
+	
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
+	}
+	public Long getServiceId() {
+		return serviceId;
+	}
+	public void setServiceId(Long serviceId) {
+		this.serviceId = serviceId;
+	}
+	public Long getProviderId() {
+		return providerId;
+	}
+	public void setProviderId(Long providerId) {
+		this.providerId = providerId;
+	}
+	public LocalDate getDate() {
+		return date;
+	}
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+	public LocalTime getStartTime() {
+		return startTime;
+	}
+	public void setStartTime(LocalTime startTime) {
+		this.startTime = startTime;
+	}
+	public LocalTime getEndTime() {
+		return endTime;
+	}
+	public void setEndTime(LocalTime endTime) {
+		this.endTime = endTime;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public Double getPrice() {
+		return price;
+	}
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+	
+	
+}

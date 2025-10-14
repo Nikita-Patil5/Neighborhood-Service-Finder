@@ -1,0 +1,47 @@
+package com.neighborhood.servicefinder.controller;
+
+import com.neighborhood.servicefinder.model.User;
+import com.neighborhood.servicefinder.repository.UserRepository;
+import com.neighborhood.servicefinder.security.JwtUtil;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    // REGISTER
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody User user) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body("Email already registered!");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return ResponseEntity.ok("User registered successfully!");
+    }
+
+    // LOGIN
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User user) {
+        return userRepository.findByEmail(user.getEmail())
+                .filter(dbUser -> passwordEncoder.matches(user.getPassword(), dbUser.getPassword()))
+                .map(dbUser -> {
+                    String token = jwtUtil.generateToken(dbUser.getEmail(), dbUser.getRole().name());
+                    return ResponseEntity.ok("Bearer " + token);
+                })
+                .orElse(ResponseEntity.status(401).body("Invalid credentials"));
+    }
+}

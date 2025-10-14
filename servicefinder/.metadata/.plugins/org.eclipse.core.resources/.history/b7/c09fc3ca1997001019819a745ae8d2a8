@@ -1,0 +1,62 @@
+package com.neighborhood.servicefinder.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.neighborhood.servicefinder.exception.ResourceNotFoundException;
+import com.neighborhood.servicefinder.model.Service;
+import com.neighborhood.servicefinder.repository.ServiceRepository;
+
+@RestController
+@RequestMapping("/api/services")
+public class ServiceController {
+
+    @Autowired
+    private ServiceRepository serviceRepository;
+
+    // 1️⃣ Add a new service
+    @PostMapping
+    public ResponseEntity<Service> addService(@RequestBody Service service) {
+        Service savedService = serviceRepository.save(service);
+        return ResponseEntity.status(201).body(savedService);
+    }
+
+    // 2️⃣ Update service
+    @PutMapping("/{id}")
+    public ResponseEntity<Service> updateService(@PathVariable Long id, @RequestBody Service serviceDetails) {
+        Service service = serviceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
+
+        service.setName(serviceDetails.getName());
+        service.setDescription(serviceDetails.getDescription());
+        service.setPrice(serviceDetails.getPrice());
+
+        Service updatedService = serviceRepository.save(service);
+        return ResponseEntity.ok(updatedService);
+    }
+
+    // 3️⃣ Delete service
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteService(@PathVariable Long id) {
+        Service service = serviceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
+
+        serviceRepository.delete(service);
+        return ResponseEntity.ok("Service deleted successfully");
+    }
+
+    // 4️⃣ Get all services (for users)
+    @GetMapping
+    public ResponseEntity<List<Service>> getAllServices() {
+        return ResponseEntity.ok(serviceRepository.findAll());
+    }
+
+    // 5️⃣ Get services by provider
+    @GetMapping("/provider/{providerId}")
+    public ResponseEntity<List<Service>> getServicesByProvider(@PathVariable Long providerId) {
+        return ResponseEntity.ok(serviceRepository.findByProviderId(providerId));
+    }
+}

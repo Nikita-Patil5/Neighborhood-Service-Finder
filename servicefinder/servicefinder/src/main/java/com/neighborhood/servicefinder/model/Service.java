@@ -1,0 +1,79 @@
+package com.neighborhood.servicefinder.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "services")
+public class Service {
+		@Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    private Long id;
+
+	    private String name;             // e.g., Plumbing, Electrician
+	    private String category;         // e.g., Home Repair, Education
+	    private String description;
+	    private Double price;            // e.g., Price per hour or per task
+
+	    // ✅ Many services can belong to one provider
+	    @ManyToOne(fetch = FetchType.LAZY)  // LAZY is better for performance
+	    @JoinColumn(name = "provider_id", nullable = false)
+	    @JsonIgnoreProperties({"services", "bookings", "password"}) 
+	    private User provider;
+	
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public Double getPrice() {
+		return price;
+	}
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+	public User getProvider() {
+		return provider;
+	}
+	public void setProvider(User provider) {
+		this.provider = provider;
+	}
+	
+	
+
+	
+}

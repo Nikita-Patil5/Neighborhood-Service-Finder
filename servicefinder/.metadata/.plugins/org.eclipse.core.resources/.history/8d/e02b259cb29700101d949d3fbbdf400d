@@ -1,0 +1,14 @@
+package com.neighborhood.servicefinder.repository;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.neighborhood.servicefinder.model.Booking;
+
+public interface BookingRepository extends JpaRepository<Booking, Long> {
+
+	List<Booking> findByProviderIdAndDate(Long providerId, LocalDate date);
+	List<Booking> findByUserId(Long userId);
+}

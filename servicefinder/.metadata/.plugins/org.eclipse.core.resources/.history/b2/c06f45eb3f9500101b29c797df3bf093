@@ -1,0 +1,5 @@
+package com.neighborhood.servicefinder.exception;
+
+public class ResourceNotFoundException {
+
+}
