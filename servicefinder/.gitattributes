@@ -1,4 +1,4 @@
 *.java linguist-detectable=true
 *.js linguist-detectable=false
-*.jsx linguist-detectable=true
+*.jsx linguist-detectable=false
 neighborhood-frontend/* linguist-vendored
