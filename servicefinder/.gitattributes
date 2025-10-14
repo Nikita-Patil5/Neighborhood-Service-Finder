@@ -1,0 +1,4 @@
+*.java linguist-detectable=true
+*.js linguist-detectable=false
+*.jsx linguist-detectable=true
+neighborhood-frontend/* linguist-vendored
