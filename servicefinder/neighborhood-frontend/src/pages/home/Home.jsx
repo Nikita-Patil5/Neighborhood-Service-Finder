@@ -51,10 +51,10 @@ const Home = () => {
       >
         <div className="p-5" style={{ maxWidth: "800px" }}>
           <h1 className="display-4 fw-bold mb-3" style={{ fontSize: "3.5rem" }}>
-            Your Neighborhood, Connected.
+            Find Trusted Local Services Near You.
           </h1>
           <p className="lead mb-4 opacity-75" style={{ fontSize: "1.3rem" }}>
-            Book trusted local services instantly and effortlessly. Quality help is just a click away.
+            Book electricians, plumbers, cleaners, and more with just a few clicks.
           </p>
           <Button
             variant="light"

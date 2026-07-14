@@ -1,5 +1,0 @@
-package com.neighborhood.servicefinder.model;
-
-public enum Role {
-
-}

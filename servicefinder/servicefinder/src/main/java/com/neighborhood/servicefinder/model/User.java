@@ -39,8 +39,31 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;   // USER, PROVIDER, ADMIN
+    
+    @Column(nullable = false)
+    private String address;
 
-    public Long getId() {
+    @Column(nullable = false, unique = true, length = 15)
+    private String phoneNumber;
+
+
+    public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public Long getId() {
 		return id;
 	}
 

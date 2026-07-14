@@ -33,6 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
             String token = header.substring(7); // Remove "Bearer "
+            if (StringUtils.hasText(token)) {
             String email = jwtUtil.extractEmail(token);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -42,14 +43,17 @@ public class JwtFilter extends OncePerRequestFilter {
                     String role = jwtUtil.extractRole(token);
 
                     // Spring Security requires ROLE_ prefix
-                    List<SimpleGrantedAuthority> authorities =
-                            List.of(new SimpleGrantedAuthority("ROLE_" + role));
+//                    List<SimpleGrantedAuthority> authorities =
+//                            List.of(new SimpleGrantedAuthority("ROLE_" + role));
+                    List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+
 
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(email, null, authorities);
                     auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
+            }
             }
         }
 

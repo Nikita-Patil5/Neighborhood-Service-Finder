@@ -9,7 +9,10 @@ public class RegisterRequestDTO {
     private String name;
     private String email;
     private String password;
-    private Role role; // "USER" or "PROVIDER"
+    private String phone;
+    private String address;
+  
+	private Role role; // "USER" or "PROVIDER"
     
     
 	public String getName() {
@@ -30,6 +33,19 @@ public class RegisterRequestDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	  public String getPhone() {
+			return phone;
+		}
+		public void setPhone(String phone) {
+			this.phone = phone;
+		}
+		public String getAddress() {
+			return address;
+		}
+		public void setAddress(String address) {
+			this.address = address;
+		}
 	public Role getRole() {
 		return role;
 	}

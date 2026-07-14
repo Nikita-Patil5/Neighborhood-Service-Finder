@@ -1,5 +1,9 @@
 package com.neighborhood.servicefinder.dto;
 
+import com.neighborhood.servicefinder.model.Role;
+
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -19,7 +23,8 @@ public class UserRequestDTO {
     private String password;
 
     @NotBlank(message = "Role is required (USER or PROVIDER)")
-    private String role;  // USER or PROVIDER
+    @Enumerated(EnumType.STRING)
+    private Role role;  // USER or PROVIDER
 
 	public String getName() {
 		return name;
@@ -45,11 +50,11 @@ public class UserRequestDTO {
 		this.password = password;
 	}
 
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
     

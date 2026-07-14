@@ -1,5 +1,0 @@
-package com.neighborhood.servicefinder.security;
-
-public class JwtUtil {
-
-}

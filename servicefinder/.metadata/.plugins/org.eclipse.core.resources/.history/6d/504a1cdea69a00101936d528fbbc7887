@@ -1,5 +1,0 @@
-package com.neighborhood.servicefinder.dto;
-
-public class RegisterRequestDTO {
-
-}

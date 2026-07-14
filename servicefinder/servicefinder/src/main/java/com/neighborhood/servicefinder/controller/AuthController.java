@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.neighborhood.servicefinder.dto.LoginResponseDTO;
+import com.neighborhood.servicefinder.dto.RegisterRequestDTO;
 import com.neighborhood.servicefinder.dto.UserRequestDTO;
 import com.neighborhood.servicefinder.model.Role;
 import com.neighborhood.servicefinder.model.User;
@@ -29,7 +30,7 @@ public class AuthController {
 
     // REGISTER
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserRequestDTO request) {
+    public ResponseEntity<String> register(@RequestBody RegisterRequestDTO request) {
         Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
         if (existingUser.isPresent()) {
             return ResponseEntity.badRequest().body("User already exists");
@@ -39,9 +40,11 @@ public class AuthController {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPhoneNumber(request.getPhone());  // ✅
+        user.setAddress(request.getAddress());    // ✅
+        //user.setRole(Role.valueOf("ROLE_" + request.getRole()));
+        user.setRole(request.getRole());
 
-        // ✅ Convert "USER" -> Role.ROLE_USER
-        user.setRole(Role.valueOf("ROLE_" + request.getRole().toUpperCase()));
 
         userRepository.save(user);
         return ResponseEntity.ok("Registration successful!");
@@ -61,8 +64,6 @@ public class AuthController {
         }
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
-
-        // ✅ return token and role
-        return ResponseEntity.ok(new LoginResponseDTO(token, user.getRole().name(),user.getId()));
+        return ResponseEntity.ok(new LoginResponseDTO(token, user.getRole(), user.getId()));
     }
 }

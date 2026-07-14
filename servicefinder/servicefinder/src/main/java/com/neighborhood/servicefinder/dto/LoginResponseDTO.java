@@ -1,14 +1,16 @@
 package com.neighborhood.servicefinder.dto;
 
+import com.neighborhood.servicefinder.model.Role;
+
 public class LoginResponseDTO {
 
     private String token;
     private String type = "Bearer";
-    private String role;
+    private Role role;
     private Long userId; // New field
 
     // Constructor
-    public LoginResponseDTO(String token, String role, Long userId) {
+    public LoginResponseDTO(String token, Role role, Long userId) {
         this.token = token;
         this.role = role;
         this.userId = userId;
@@ -31,11 +33,11 @@ public class LoginResponseDTO {
         this.type = type;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
