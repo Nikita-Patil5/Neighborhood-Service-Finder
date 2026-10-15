@@ -1,0 +1,59 @@
+# Run everything:  docker compose up --build
+# Then open http://localhost:5173
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: neighborhood_service
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  ai-service:
+    build: ./ai-service
+    volumes:
+      - hf_cache:/root/.cache/huggingface      # keep downloaded models between runs
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s                       # first start downloads the models
+
+  backend:
+    build: ./servicefinder/servicefinder
+    depends_on:
+      db:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/neighborhood_service?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      APP_SALT: ${APP_SALT:?set APP_SALT in .env}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      AI_SERVICE_URL: http://ai-service:8000
+      APP_SEED: ${APP_SEED:-false}             # true = load demo data on startup
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./servicefinder/neighborhood-frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"                              # same port as `npm run dev`, so existing CORS settings keep working
+
+volumes:
+  db_data:
+  hf_cache:

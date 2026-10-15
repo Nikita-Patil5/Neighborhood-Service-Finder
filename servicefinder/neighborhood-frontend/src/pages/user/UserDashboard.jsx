@@ -41,6 +41,7 @@ import {
   FaMapMarkedAlt, 
 } from "react-icons/fa";
 import { format } from "date-fns";
+import ReviewInsights from "../../components/ReviewInsights";
 
 // Helper component for Star Rating display/input
 const StarRating = ({ rating, setRating, editable = false }) => {
@@ -613,6 +614,7 @@ const UserDashboard = () => {
                   <strong>{r.serviceName}</strong> -{" "}
                   <StarRating rating={r.rating} />
                   <p className="mb-0 text-muted">{r.comment}</p>
+                  <ReviewInsights review={r} flagText="Under review, hidden from public" />
                 </div>
                 <div className="d-flex gap-2">
                   <Button
@@ -904,6 +906,7 @@ const UserDashboard = () => {
                         <strong>{r.serviceName}</strong> -{" "}
                         <StarRating rating={r.rating} />
                         <p className="mb-0 text-muted">{r.comment}</p>
+                        <ReviewInsights review={r} flagText="Under review, hidden from public" />
                       </div>
                       <div className="d-flex gap-2">
                         <Button

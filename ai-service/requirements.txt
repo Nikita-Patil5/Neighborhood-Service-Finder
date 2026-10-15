@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+sentence-transformers
+faiss-cpu
+transformers
+torch
+numpy
+pandas
+pydantic

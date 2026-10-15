@@ -44,6 +44,7 @@ import {
 } from "react-icons/fa";
 import { format } from "date-fns";
 import "./ProviderDashboard.css"; // We'll create this CSS file
+import ProviderInsights from "./ProviderInsights";
 
 // StarRating component for consistent display
 const StarRating = ({ rating }) => {
@@ -391,6 +392,8 @@ const ProviderDashboard = () => {
           </Card>
         </Col>
       </Row>
+
+      <ProviderInsights />
 
       {/* Service Modal (Add/Edit) */}
       <Modal show={showServiceModal} onHide={() => setShowServiceModal(false)} centered>

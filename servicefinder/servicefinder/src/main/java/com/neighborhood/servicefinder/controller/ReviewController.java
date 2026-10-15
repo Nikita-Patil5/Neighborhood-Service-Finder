@@ -140,49 +140,55 @@
 //
 
 
-package com.neighborhood.servicefinder.controller;
+//package com.neighborhood.servicefinder.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import jakarta.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
-
-import com.neighborhood.servicefinder.dto.ReviewRequestDTO;
-import com.neighborhood.servicefinder.dto.ReviewResponseDTO;
-import com.neighborhood.servicefinder.dto.ReviewUpdateDTO;
-import com.neighborhood.servicefinder.exception.ResourceNotFoundException;
-import com.neighborhood.servicefinder.model.Booking;
-import com.neighborhood.servicefinder.model.Review;
-import com.neighborhood.servicefinder.model.Service;
-import com.neighborhood.servicefinder.model.User;
-import com.neighborhood.servicefinder.repository.BookingRepository;
-import com.neighborhood.servicefinder.repository.ReviewRepository;
-import com.neighborhood.servicefinder.repository.ServiceRepository;
-import com.neighborhood.servicefinder.repository.UserRepository;
-
-@RestController
-@RequestMapping("/api/reviews")
-public class ReviewController {
-
-    @Autowired
-    private ReviewRepository reviewRepository;
-
-    @Autowired
-    private ServiceRepository serviceRepository;
-
-    @Autowired
-    private BookingRepository bookingRepository;
-
-    
-    @Autowired
-    private UserRepository userRepository;
+//import java.util.List;
+//import java.util.Map;
+//import java.util.stream.Collectors;
+//
+//import jakarta.validation.Valid;
+//
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.http.HttpStatus;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.web.bind.annotation.*;
+//
+//import com.neighborhood.servicefinder.dto.ReviewRequestDTO;
+//import com.neighborhood.servicefinder.dto.ReviewResponseDTO;
+//import com.neighborhood.servicefinder.dto.ReviewUpdateDTO;
+//import com.neighborhood.servicefinder.dto.ServiceInsightDTO;
+//import com.neighborhood.servicefinder.exception.ResourceNotFoundException;
+//import com.neighborhood.servicefinder.model.Booking;
+//import com.neighborhood.servicefinder.model.Review;
+//import com.neighborhood.servicefinder.model.Service;
+//import com.neighborhood.servicefinder.model.User;
+//import com.neighborhood.servicefinder.repository.BookingRepository;
+//import com.neighborhood.servicefinder.repository.ReviewRepository;
+//import com.neighborhood.servicefinder.repository.ServiceRepository;
+//import com.neighborhood.servicefinder.repository.UserRepository;
+//import com.neighborhood.servicefinder.service.ReviewService;
+//
+//@RestController
+//@RequestMapping("/api/reviews")
+//public class ReviewController {
+//
+//    @Autowired
+//    private ReviewRepository reviewRepository;
+//
+//    @Autowired
+//    private ServiceRepository serviceRepository;
+//
+//    @Autowired
+//    private BookingRepository bookingRepository;
+//
+//    
+//    @Autowired
+//    private UserRepository userRepository;
+//    
+//    @Autowired
+//    private ReviewService reviewService;
 
     // ==============================
     // User APIs
@@ -223,48 +229,48 @@ public class ReviewController {
 //        Review savedReview = reviewRepository.save(review);
 //        return ResponseEntity.ok(new ReviewResponseDTO(savedReview));
 //    }
-
-    @PostMapping
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ReviewResponseDTO> addReview(@Valid @RequestBody ReviewRequestDTO reviewRequest,
-                                                       Authentication authentication) {
-        Booking booking = bookingRepository.findById(reviewRequest.getBookingId())
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
-
-        // ✅ Only allow review if booking status is DONE
-        if (!booking.getStatus().equals("DONE")) {
-            throw new IllegalArgumentException("You can only review a booking that has been completed (DONE).");
-        }
-
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        if (!booking.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        Service service = booking.getService();
-
-        Review review = new Review(booking, user, service,
-                                   reviewRequest.getRating(),
-                                   reviewRequest.getComment());
-
-        Review saved = reviewRepository.save(review);
-        return ResponseEntity.ok(new ReviewResponseDTO(saved));
-    }
-
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/my") // NEW ENDPOINT: Get reviews by the current user
-    public ResponseEntity<List<ReviewResponseDTO>> getUserReviews(Authentication authentication) {
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        List<Review> reviews = reviewRepository.findByUser(user);
-        List<ReviewResponseDTO> response = reviews.stream()
-                .map(ReviewResponseDTO::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
-    }
+//
+//    @PostMapping
+//    @PreAuthorize("hasRole('USER')")
+//    public ResponseEntity<ReviewResponseDTO> addReview(@Valid @RequestBody ReviewRequestDTO reviewRequest,
+//                                                       Authentication authentication) {
+//        Booking booking = bookingRepository.findById(reviewRequest.getBookingId())
+//                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+//
+//        // ✅ Only allow review if booking status is DONE
+//        if (!booking.getStatus().equals("DONE")) {
+//            throw new IllegalArgumentException("You can only review a booking that has been completed (DONE).");
+//        }
+//
+//        User user = userRepository.findByEmail(authentication.getName())
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//
+//        if (!booking.getUser().getId().equals(user.getId())) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//        }
+//
+//        Service service = booking.getService();
+//
+//        Review review = new Review(booking, user, service,
+//                                   reviewRequest.getRating(),
+//                                   reviewRequest.getComment());
+//
+//        Review saved = reviewService.addReview(review); 
+//        return ResponseEntity.ok(new ReviewResponseDTO(saved));
+//    }
+//
+//    @PreAuthorize("hasRole('USER')")
+//    @GetMapping("/my") // NEW ENDPOINT: Get reviews by the current user
+//    public ResponseEntity<List<ReviewResponseDTO>> getUserReviews(Authentication authentication) {
+//        User user = userRepository.findByEmail(authentication.getName())
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//
+//        List<Review> reviews = reviewRepository.findByUser(user);
+//        List<ReviewResponseDTO> response = reviews.stream()
+//                .map(ReviewResponseDTO::new)
+//                .collect(Collectors.toList());
+//        return ResponseEntity.ok(response);
+//    }
 
 //    @PreAuthorize("hasRole('USER')")
 //    @PutMapping("/{id}")
@@ -292,46 +298,189 @@ public class ReviewController {
 //        return ResponseEntity.ok(new ReviewResponseDTO(updatedReview));
 //    }
 
-    @PreAuthorize("hasRole('USER')")
-    @PutMapping("/{id}")
-    public ResponseEntity<ReviewResponseDTO> updateReview(
-            @PathVariable Long id,
-            @Valid @RequestBody ReviewUpdateDTO reviewRequest,
-            Authentication authentication) {
+//    @PreAuthorize("hasRole('USER')")
+//    @PutMapping("/{id}")
+//    public ResponseEntity<ReviewResponseDTO> updateReview(
+//            @PathVariable Long id,
+//            @Valid @RequestBody ReviewUpdateDTO reviewRequest,
+//            Authentication authentication) {
+//
+//        Review review = reviewRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
+//
+//        User user = userRepository.findByEmail(authentication.getName())
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//
+//        if (!review.getUser().getId().equals(user.getId())) {
+//            return ResponseEntity.status(403).build(); // Forbidden
+//        }
+//
+//        // ✅ Only update rating & comment, keep booking & service intact
+//        review.setRating(reviewRequest.getRating());
+//        review.setComment(reviewRequest.getComment());
+//
+//        Review updatedReview = reviewService.addReview(review);
+//        return ResponseEntity.ok(new ReviewResponseDTO(updatedReview));
+//    }
+//
+//
+//    @PreAuthorize("hasRole('USER')")
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<String> deleteReview(@PathVariable Long id, Authentication authentication) {
+//        Review review = reviewRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
+//
+//        User user = userRepository.findByEmail(authentication.getName())
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//
+//        if (!review.getUser().getId().equals(user.getId())) {
+//            return ResponseEntity.status(403).body("You can delete only your own reviews");
+//        }
+//
+//        reviewRepository.delete(review);
+//        return ResponseEntity.ok("Review deleted successfully");
+//    }
+//
+//    // ==============================
+//    // Public/Shared APIs (read-only)
+//    // ==============================
+//
+//    @PreAuthorize("hasAnyRole('PROVIDER','USER','ADMIN')") // Changed to include USER as well
+//    @GetMapping("/service/{serviceId}")
+//    public ResponseEntity<List<ReviewResponseDTO>> getReviewsForService(@PathVariable Long serviceId) {
+//        Service service = serviceRepository.findById(serviceId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
+//
+//        List<Review> reviews = reviewRepository.findVisibleByService(service);
+//        List<ReviewResponseDTO> response = reviews.stream()
+//                .map(ReviewResponseDTO::new)
+//                .collect(Collectors.toList());
+//        return ResponseEntity.ok(response);
+//    }
+//
+//    // ==============================
+//    // Admin APIs
+//    // ==============================
+//
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @GetMapping("/all")
+//    public ResponseEntity<List<ReviewResponseDTO>> getAllReviews() {
+//        List<Review> reviews = reviewRepository.findAll();
+//        List<ReviewResponseDTO> response = reviews.stream()
+//                .map(ReviewResponseDTO::new)
+//                .collect(Collectors.toList());
+//        return ResponseEntity.ok(response);
+//    }
+//
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @DeleteMapping("/admin/{id}")
+//    public ResponseEntity<String> adminDeleteReview(@PathVariable Long id) {
+//        Review review = reviewRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
+//
+//        reviewRepository.delete(review);
+//        return ResponseEntity.ok("Review deleted successfully by admin");
+//    }
+//    
+//    
+// // Provider: sentiment summary per service
+//    @PreAuthorize("hasRole('PROVIDER')")
+//    @GetMapping("/provider/insights")
+//    public ResponseEntity<List<ServiceInsightDTO>> getMyInsights(Authentication authentication) {
+//        User provider = userRepository.findByEmail(authentication.getName())
+//                .orElseThrow(() -> new ResourceNotFoundException("Provider not found"));
+//
+//        List<Review> visible = reviewRepository.findByServiceProvider(provider).stream()
+//                .filter(r -> !Boolean.TRUE.equals(r.getFlagged()))
+//                .collect(Collectors.toList());
+//
+//        Map<Long, List<Review>> byService = visible.stream()
+//                .collect(Collectors.groupingBy(r -> r.getService().getId()));
+//
+//        List<ServiceInsightDTO> result = byService.entrySet().stream()
+//                .map(e -> ServiceInsightDTO.from(
+//                        e.getKey(),
+//                        e.getValue().get(0).getService().getName(),
+//                        e.getValue()))
+//                .collect(Collectors.toList());
+//
+//        return ResponseEntity.ok(result);
+//    }
+//
+//    // Admin: approve a flagged review (clears the flag)
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @PutMapping("/admin/{id}/approve")
+//    public ResponseEntity<String> approveReview(@PathVariable Long id) {
+//        Review review = reviewRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
+//        review.setFlagged(false);
+//        reviewRepository.save(review);
+//        return ResponseEntity.ok("Review approved");
+//    }
+//}
 
-        Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
 
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+package com.neighborhood.servicefinder.controller;
 
-        if (!review.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(403).build(); // Forbidden
-        }
+import java.util.List;
+import java.util.stream.Collectors;
 
-        // ✅ Only update rating & comment, keep booking & service intact
-        review.setRating(reviewRequest.getRating());
-        review.setComment(reviewRequest.getComment());
+import jakarta.validation.Valid;
 
-        Review updatedReview = reviewRepository.save(review);
-        return ResponseEntity.ok(new ReviewResponseDTO(updatedReview));
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import com.neighborhood.servicefinder.dto.ReviewRequestDTO;
+import com.neighborhood.servicefinder.dto.ReviewResponseDTO;
+import com.neighborhood.servicefinder.dto.ReviewUpdateDTO;
+import com.neighborhood.servicefinder.dto.ServiceInsightDTO;
+import com.neighborhood.servicefinder.model.Review;
+import com.neighborhood.servicefinder.service.ReviewService;
+
+/** Thin controller: checks the role, delegates to ReviewService, converts to DTOs. */
+@RestController
+@RequestMapping("/api/reviews")
+public class ReviewController {
+
+    private final ReviewService reviewService;
+
+    public ReviewController(ReviewService reviewService) {
+        this.reviewService = reviewService;
     }
 
+    // ==============================
+    // User APIs
+    // ==============================
+
+    @PostMapping
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<ReviewResponseDTO> addReview(@Valid @RequestBody ReviewRequestDTO reviewRequest,
+                                                       Authentication authentication) {
+        Review saved = reviewService.createReview(reviewRequest, authentication.getName());
+        return ResponseEntity.ok(new ReviewResponseDTO(saved));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/my")
+    public ResponseEntity<List<ReviewResponseDTO>> getUserReviews(Authentication authentication) {
+        return ResponseEntity.ok(toDtos(reviewService.getMyReviews(authentication.getName())));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/{id}")
+    public ResponseEntity<ReviewResponseDTO> updateReview(@PathVariable Long id,
+                                                          @Valid @RequestBody ReviewUpdateDTO reviewRequest,
+                                                          Authentication authentication) {
+        Review updated = reviewService.updateReview(id, reviewRequest, authentication.getName());
+        return ResponseEntity.ok(new ReviewResponseDTO(updated));
+    }
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteReview(@PathVariable Long id, Authentication authentication) {
-        Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
-
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        if (!review.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(403).body("You can delete only your own reviews");
-        }
-
-        reviewRepository.delete(review);
+        reviewService.deleteReview(id, authentication.getName());
         return ResponseEntity.ok("Review deleted successfully");
     }
 
@@ -339,17 +488,20 @@ public class ReviewController {
     // Public/Shared APIs (read-only)
     // ==============================
 
-    @PreAuthorize("hasAnyRole('PROVIDER','USER','ADMIN')") // Changed to include USER as well
+    @PreAuthorize("hasAnyRole('PROVIDER','USER','ADMIN')")
     @GetMapping("/service/{serviceId}")
     public ResponseEntity<List<ReviewResponseDTO>> getReviewsForService(@PathVariable Long serviceId) {
-        Service service = serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
+        return ResponseEntity.ok(toDtos(reviewService.getVisibleReviewsForService(serviceId)));
+    }
 
-        List<Review> reviews = reviewRepository.findByService(service);
-        List<ReviewResponseDTO> response = reviews.stream()
-                .map(ReviewResponseDTO::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+    // ==============================
+    // Provider APIs
+    // ==============================
+
+    @PreAuthorize("hasRole('PROVIDER')")
+    @GetMapping("/provider/insights")
+    public ResponseEntity<List<ServiceInsightDTO>> getMyInsights(Authentication authentication) {
+        return ResponseEntity.ok(reviewService.getProviderInsights(authentication.getName()));
     }
 
     // ==============================
@@ -359,20 +511,24 @@ public class ReviewController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<ReviewResponseDTO>> getAllReviews() {
-        List<Review> reviews = reviewRepository.findAll();
-        List<ReviewResponseDTO> response = reviews.stream()
-                .map(ReviewResponseDTO::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(toDtos(reviewService.getAllReviews()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/admin/{id}")
     public ResponseEntity<String> adminDeleteReview(@PathVariable Long id) {
-        Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
-
-        reviewRepository.delete(review);
+        reviewService.adminDeleteReview(id);
         return ResponseEntity.ok("Review deleted successfully by admin");
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/admin/{id}/approve")
+    public ResponseEntity<String> approveReview(@PathVariable Long id) {
+        reviewService.approveReview(id);
+        return ResponseEntity.ok("Review approved");
+    }
+
+    private List<ReviewResponseDTO> toDtos(List<Review> reviews) {
+        return reviews.stream().map(ReviewResponseDTO::new).collect(Collectors.toList());
     }
 }

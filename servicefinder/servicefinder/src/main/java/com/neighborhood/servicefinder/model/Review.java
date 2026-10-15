@@ -119,6 +119,16 @@ public class Review {
     
     @Column(columnDefinition = "TEXT")
     private String comment;
+    
+    @Column(length = 20)
+    private String sentiment;          // positive | neutral | negative
+
+    private Double sentimentScore;     // model confidence 0..1
+
+    @Column(length = 255)
+    private String aspects;            // e.g. "punctuality:negative,price:positive"
+
+    private Boolean flagged = false;   // true = suspected spam, hidden/moderated by admin
 
     // --- RENAMED: from reviewDate to createdAt ---
     private LocalDateTime createdAt; // When the review was left
@@ -159,6 +169,18 @@ public class Review {
     // --- RENAMED: Getter and Setter for createdAt ---
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public String getSentiment() { return sentiment; }
+    public void setSentiment(String sentiment) { this.sentiment = sentiment; }
+
+    public Double getSentimentScore() { return sentimentScore; }
+    public void setSentimentScore(Double sentimentScore) { this.sentimentScore = sentimentScore; }
+
+    public String getAspects() { return aspects; }
+    public void setAspects(String aspects) { this.aspects = aspects; }
+
+    public Boolean getFlagged() { return flagged; }
+    public void setFlagged(Boolean flagged) { this.flagged = flagged; }
 
     // Optional: Add toString, equals, hashCode if needed
 }

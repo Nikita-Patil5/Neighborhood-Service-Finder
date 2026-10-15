@@ -1,0 +1,29 @@
+# secrets
+.env
+application-local.properties
+
+# build output
+target/
+dist/
+node_modules/
+*.class
+*.jar
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
+.settings/
+.classpath
+.project
+*.iml
+
+# misc
+*.log
+.DS_Store
+Thumbs.db

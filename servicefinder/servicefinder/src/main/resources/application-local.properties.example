@@ -1,0 +1,18 @@
+# Copy this file to application-local.properties (same folder) and fill in YOUR real values.
+# application-local.properties is git-ignored. Never commit it.
+# Activate it by running the app with the profile:  SPRING_PROFILES_ACTIVE=local
+
+spring.datasource.username=root
+spring.datasource.password=YOUR_DB_PASSWORD
+
+spring.mail.username=YOUR_EMAIL@gmail.com
+spring.mail.password=YOUR_GMAIL_APP_PASSWORD
+
+# Keep the SAME values you used before, otherwise existing logins stop working
+jwt.secret=YOUR_LONG_RANDOM_SECRET
+jwt.expiration=86400000
+spring.saltvalue=YOUR_SALT
+
+# Optional: demo data and SQL logging for development
+app.seed=true
+spring.jpa.show-sql=true
