@@ -51,7 +51,7 @@ jobs:
           exit 1
 
       # 2. Add executable rights to wrapper script and execute inside the directory
-      - name: Run Backend Tests via Wrapper
+      - name: Run Backend Tests 
         run: |
           chmod +x mvnw
           ./mvnw -B test -Dspring.profiles.active=test
