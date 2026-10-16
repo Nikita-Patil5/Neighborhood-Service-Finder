@@ -54,7 +54,7 @@ jobs:
       - name: Run Backend Tests via Wrapper
         run: |
           chmod +x mvnw
-          ./mvnw -B test -Dspring.profiles.active=local
+          ./mvnw -B test -Dspring.profiles.active=test
 
   ai-service:
     runs-on: ubuntu-latest
