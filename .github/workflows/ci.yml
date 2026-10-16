@@ -23,8 +23,8 @@ jobs:
           --health-interval=5s --health-timeout=5s --health-retries=20
     env:
       SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/neighborhood_service
-      SPRING_DATASOURCE_USERNAME: username
-      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
       JWT_SECRET: ci-only-secret-not-for-production-use-0123456789-abcdefghij
       APP_SALT: ci-only-salt
     steps:
