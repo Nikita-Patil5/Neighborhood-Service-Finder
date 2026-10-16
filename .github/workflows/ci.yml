@@ -22,6 +22,7 @@ jobs:
           --health-cmd="mysqladmin ping -h localhost -proot"
           --health-interval=5s --health-timeout=5s --health-retries=20
     env:
+      SPRING_PROFILES_ACTIVE: local
       SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/neighborhood_service
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
@@ -34,7 +35,27 @@ jobs:
           distribution: temurin
           java-version: "21"                   # match <java.version> in pom.xml
           cache: maven
-      - run: chmod +x mvnw && ./mvnw -B test
+      # 1. Blocks test execution until the container is fully initialized
+      - name: Wait for MySQL Database Initialization
+        run: |
+          sudo apt-get update && sudo apt-get install -y mysql-client
+          for i in {1..20}; do
+            if mysqladmin ping -h 127.0.0.1 -P 3306 -u root -proot --silent; then
+              echo "MySQL container is running safely!"
+              exit 0
+            fi
+            echo "Waiting for database initialization..."
+            sleep 3
+          done
+          echo "MySQL container failed to start"
+          exit 1
+
+      # 2. Add executable rights to wrapper script and execute inside the directory
+      - name: Run Backend Tests via Wrapper
+        run: |
+          cd servicefinder/servicefinder
+          chmod +x mvnw
+          ./mvnw -B test -Dspring.profiles.active=local
 
   ai-service:
     runs-on: ubuntu-latest
